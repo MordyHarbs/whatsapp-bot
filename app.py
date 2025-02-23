@@ -1,7 +1,9 @@
 from flask import Flask, request
+import os
 
 app = Flask(__name__)
 
+# Webhook verification
 @app.route('/webhook', methods=['GET'])
 def verify():
     verify_token = "my_custom_token"
@@ -12,11 +14,13 @@ def verify():
         return challenge
     return "Verification failed", 403
 
+# Handle incoming messages
 @app.route('/webhook', methods=['POST'])
 def receive_message():
     data = request.json
-    print("Received:", data)
+    print("Received:", data)  # Logs the message for debugging
     return "OK"
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000)
+    port = int(os.environ.get("PORT", 5000))  # Render assigns a port dynamically
+    app.run(host="0.0.0.0", port=port)
