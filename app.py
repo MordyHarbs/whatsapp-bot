@@ -6,7 +6,7 @@ app = Flask(__name__)
 
 # Replace with your actual WhatsApp API details
 WHATSAPP_PHONE_NUMBER_ID = "525298894008965"  # Your WhatsApp phone number ID
-WHATSAPP_ACCESS_TOKEN = "EAASmeEcmWYcBOZBw5Hm87YMwZCVhZCFS1I7rDAtbyfb6rz52BUwG3C44Fubxibgel2KmhZBsnah4ap6ymcIBKvfFnJg6aIr2ZBQlWsXFSkxJ7XGrMlZAt0UNUS3od5Pcg1vLtPsGEKCZC0RGBPHwk8xyzVk05T6ght3SrU7nhlL4DwMcmTgPGXMgSTLYhdMMPd6Nj5hDfdonkwUPW9iXrycnAMZBtMffUGzl6cmAoc3Xbehyr8FUshIZD"
+WHATSAPP_ACCESS_TOKEN = "EAASmeEcmWYcBO6MVDPMR2UZB7539tEe1kTffBCm9FnnQ06xNrn5cNHorwUgXW2nSmzuvKSRSmiFDqOpYTZAoArWR8INs1t9m6zVKlOPUSE3nwB2Ya1zihs4UzXF5NPFPkImSnuQVjcHEYn0ZCEq0QgIRX1Y3rVYrI2ZCzuxk2fEAaFO93hHmHxO9fZCZBJ2w8yLNLsxjJRXdAvp6ZAQ12NXUkY0ONJwUEdavMOZBimeA9VkGryTVBQcZD"
 VERIFY_TOKEN = "my_custom_token"  # The token you set in Meta's webhook settings
 
 @app.route('/webhook', methods=['GET'])
