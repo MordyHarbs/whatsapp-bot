@@ -20,5 +20,5 @@ def receive_message():
     return jsonify({"status": "received"}), 200
 
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 5000))  # Ensures Render uses the right port
+    port = int(os.environ.get("PORT", 10000))  # Ensures Render uses the right port
     app.run(host="0.0.0.0", port=port)
