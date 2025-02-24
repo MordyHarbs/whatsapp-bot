@@ -1,4 +1,3 @@
 flask
-gunicornrequests
 requests
 gunicorn
