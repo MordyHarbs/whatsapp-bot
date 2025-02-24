@@ -25,16 +25,23 @@ def receive_message():
     data = request.json
     print("Received:", data)  # Debugging log
 
-    if "messages" in data["entry"][0]["changes"][0]["value"]:
-        msg = data["entry"][0]["changes"][0]["value"]["messages"][0]
-        sender = msg["from"]
-        message_text = msg["text"]["body"] if "text" in msg else ""
+    # Ensure the request contains the required structure
+    if "entry" in data and len(data["entry"]) > 0:
+        changes = data["entry"][0].get("changes", [])
+        if len(changes) > 0 and "value" in changes[0]:
+            value = changes[0]["value"]
 
-        # Log the incoming message
-        print(f"Message from {sender}: {message_text}")
+            # Check if the incoming webhook contains a message
+            if "messages" in value:
+                msg = value["messages"][0]  # Get the first message
+                sender = msg["from"]
+                message_text = msg["text"]["body"] if "text" in msg else ""
 
-        # Auto-reply
-        send_reply(sender, "Hello! This is an auto-reply from my bot.")
+                # Log the received message
+                print(f"Message from {sender}: {message_text}")
+
+                # Auto-reply with a response
+                send_reply(sender, f"Hello! You said: {message_text}")
 
     return jsonify({"status": "received"}), 200
 
@@ -48,6 +55,7 @@ def send_reply(recipient, text):
     data = {
         "messaging_product": "whatsapp",
         "to": recipient,
+        "type": "text",
         "text": {"body": text}
     }
     
