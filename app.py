@@ -6,7 +6,7 @@ app = Flask(__name__)
 
 # Replace with your actual WhatsApp API details
 WHATSAPP_PHONE_NUMBER_ID = "525298894008965"  # Your WhatsApp phone number ID
-WHATSAPP_ACCESS_TOKEN = "EAASmeEcmWYcBOxyN3YUDqrwFJgSQesfRO0ZCchXOA8AeiCi5jOgo8r6NWTQBuBr9dnrLE5DuNxtAqbjFQHzWtN6d9PuIGdkyWpA8CyLZBBAdQwSYcESXuKXhv9C1H3gQiYmuEirBdat3wWxbDCebXd9BrMJQmWjIuPwZCSM6vgmSMXKVRxAhDGPOZA5zQZCOgbZBhDPvUCmfhC2EEZCgMcyKiU7F5L5rtdmMKa35BDTZBU0xQeDxNsEZD"
+WHATSAPP_ACCESS_TOKEN = "EAASmeEcmWYcBO6MVDPMR2UZB7539tEe1kTffBCm9FnnQ06xNrn5cNHorwUgXW2nSmzuvKSRSmiFDqOpYTZAoArWR8INs1t9m6zVKlOPUSE3nwB2Ya1zihs4UzXF5NPFPkImSnuQVjcHEYn0ZCEq0QgIRX1Y3rVYrI2ZCzuxk2fEAaFO93hHmHxO9fZCZBJ2w8yLNLsxjJRXdAvp6ZAQ12NXUkY0ONJwUEdavMOZBimeA9VkGryTVBQcZD"
 VERIFY_TOKEN = "my_custom_token"  # The token you set in Meta's webhook settings
 
 @app.route('/webhook', methods=['GET'])
@@ -35,18 +35,14 @@ def receive_message():
             if "messages" in value:
                 msg = value["messages"][0]  # Get the first message
                 sender = msg["from"]
-                message_text = msg["text"]["body"] if "text" in msg else ""
 
-                # Log the received message
-                print(f"Message from {sender}: {message_text}")
-
-                # Auto-reply with a response
-                send_reply(sender, f"Hello! You said: {message_text}")
+                # Send the menu to the sender
+                send_menu(sender)
 
     return jsonify({"status": "received"}), 200
 
-def send_reply(recipient, text):
-    """Sends a WhatsApp message via Cloud API."""
+def send_menu(recipient):
+    """Sends a menu with two options."""
     url = f"https://graph.facebook.com/v17.0/{WHATSAPP_PHONE_NUMBER_ID}/messages"
     headers = {
         "Authorization": f"Bearer {WHATSAPP_ACCESS_TOKEN}",
@@ -55,12 +51,27 @@ def send_reply(recipient, text):
     data = {
         "messaging_product": "whatsapp",
         "to": recipient,
-        "type": "text",
-        "text": {"body": text}
+        "type": "interactive",
+        "interactive": {
+            "type": "list",
+            "body": {"text": "Please choose an option:"},
+            "action": {
+                "button": "Select an option",
+                "sections": [
+                    {
+                        "title": "Options",
+                        "rows": [
+                            {"id": "option_1", "title": "Option 1", "description": "Select this for Option 1"},
+                            {"id": "option_2", "title": "Option 2", "description": "Select this for Option 2"}
+                        ]
+                    }
+                ]
+            }
+        }
     }
-    
+
     response = requests.post(url, headers=headers, json=data)
-    print("Reply Sent:", response.json())  # Debugging log
+    print("Menu Sent:", response.json())  # Debugging log
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 10000))  # Ensure it matches Render's assigned port
