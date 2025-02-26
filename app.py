@@ -103,14 +103,21 @@ def send_menu(recipient):
     print("Menu Sent:", response.json())  # Debugging log
 
 def get_car_code(car_number):
-    """Fetches car code from Google Sheets based on the provided car number"""
-    records = cars_sheet.get_all_records()  # Fetch all rows
-
-    for row in records:
-        if str(row.get("D", "")).strip() == car_number:
-            return row.get("G", "לא נמצא קוד לרכב זה")  # Return column G value
+    """Fetches car code from Google Sheets based on the provided car number (4th column)"""
+    records = cars_sheet.get_all_values()  # Fetch all rows as raw values (not dictionary)
     
-    return "לא נמצא קוד לרכב זה"  # Return if not found
+    print(f"Searching for car number: {car_number}")  # Debugging log
+    print("Google Sheets Data:", records)  # Print all records
+    
+    # Iterate over each row, skipping the header (assuming row 1 is the header)
+    for row in records[1:]:
+        if len(row) >= 4 and row[3].strip() == car_number:  # Column D (4th column)
+            if len(row) >= 7 and row[6].strip():  # Column G (7th column) is not empty
+                return f"הקוד הוא {row[6].strip()}"
+            else:
+                return "רכב זה לא נמצא"
+
+    return "רכב זה לא נמצא"  # Return if not found
 
 def send_message(recipient, text):
     """Sends a WhatsApp text message"""
