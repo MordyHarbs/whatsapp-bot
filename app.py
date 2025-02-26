@@ -62,7 +62,7 @@ def receive_message():
                 elif sender in user_state and user_state[sender] == "waiting_for_car_number":
                     car_number = msg.get("text", {}).get("body", "").strip()
                     car_code = get_car_code(car_number)  # Fetch car code from Google Sheets
-                    send_message(sender, f"הקוד הוא {car_code}")
+                    send_message(sender, {car_code})
                     del user_state[sender]  # Remove user from tracking after response
 
                 else:
@@ -90,7 +90,7 @@ def send_menu(recipient):
                     {
                         "title": "אפשרויות",
                         "rows": [
-                            {"id": "get_car_code", "title": "קוד לרכב", "description": "הזן מספר רכב לקבלת קוד"},
+                            {"id": "get_car_code", "title": "קוד לרכב", "description": "אנא המתן"},
                             {"id": "option_2", "title": "Option 2", "description": "Select this for Option 2"}
                         ]
                     }
@@ -113,12 +113,12 @@ def get_car_code(car_number):
     for row in records[1:]:
         if len(row) >= 4 and row[3].strip() == car_number:  # Column D (4th column)
             if len(row) >= 7 and row[6].strip():  # Column G (7th column) is not empty
-                return f"הקוד הוא {row[6].strip()}"
+                return f"*הקוד הוא:* {row[6].strip()}"
             else:
-                return "רכב זה לא נמצא"
+                return "לא נמצא קוד לרכב זה"
 
     return "רכב זה לא נמצא"  # Return if not found
-
+    
 def send_message(recipient, text):
     """Sends a WhatsApp text message"""
     url = f"https://graph.facebook.com/v17.0/{WHATSAPP_PHONE_NUMBER_ID}/messages"
